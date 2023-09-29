@@ -23,18 +23,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.the.coso.ui.theme.CoSoTheme
+import com.the.coso.ui.theme.Lato
 import com.the.coso.ui.theme.Thirteen
 
 
-
+    
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GettingStartedThree(){
+fun GettingStartedThree(navController: NavHostController) {
 
     // Course Selector Variables
     val courses = listOf("select college","Computer Science and Engineering","Civil Engineering")
@@ -80,6 +84,7 @@ fun GettingStartedThree(){
                         focusedContainerColor = Thirteen,
                         unfocusedContainerColor = Thirteen,
                     )
+                    ,textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp)
                 )
                 ExposedDropdownMenu(
                     expanded = expandedCourse,
@@ -117,12 +122,13 @@ fun GettingStartedThree(){
                         focusedContainerColor = Thirteen,
                         unfocusedContainerColor = Thirteen,
                     )
+                    ,textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp)
                 )
                 ExposedDropdownMenu(
                     expanded = expandedYear,
                     onDismissRequest = {expandedYear = false}
                 ){
-                    courses.forEach{ selectedOption ->
+                    years.forEach{ selectedOption ->
                         DropdownMenuItem(
                             text = {Text(selectedOption)},
                             onClick = {
@@ -149,9 +155,11 @@ fun GettingStartedThree(){
                     focusedIndicatorColor = Thirteen,
                     unfocusedIndicatorColor = Thirteen,
 
-                ))
+                ),
+                textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+            )
             Spacer(modifier = Modifier.height(40.dp))
-            ButtonComponent()
+            ButtonComponent(onClick = {})
         }
     }
 }
@@ -160,5 +168,5 @@ fun GettingStartedThree(){
 @Preview
 @Composable
 fun PrevThree(){
-    GettingStartedThree()
+    GettingStartedThree(rememberNavController())
 }

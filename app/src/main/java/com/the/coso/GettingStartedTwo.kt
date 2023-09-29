@@ -2,6 +2,7 @@ package com.the.coso
 
 import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,11 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.Thirteen
 
 @Composable
-fun GettingStartedTwo(){
+fun GettingStartedTwo(navController: NavController){
     CoSoTheme {
         Column(modifier = Modifier
             .background(Color.White)
@@ -48,18 +51,19 @@ fun GettingStartedTwo(){
 
             // Go to Gallery
             Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()){
-                CamComponent(painterResource(R.drawable.image_add_fill))
-                CamComponent(painterResource(R.drawable.camera))
+                CamComponent(painterResource(R.drawable.image_add_fill),navController)
+                CamComponent(painterResource(R.drawable.camera),navController)
             }
         }
     }
 }
 
 @Composable
-fun CamComponent(painter:Painter){
-    Box(contentAlignment = Alignment.Center){
+fun CamComponent(painter:Painter,navController: NavController){
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable {
+        navController.navigate(Screens.GettingStartedThree.route)
+    }){
         Surface(shape = RoundedCornerShape(50), color = Thirteen, modifier = Modifier.size(110.dp)){
-
         }
         Icon(painter = painter,contentDescription="camera")
     }
@@ -68,5 +72,5 @@ fun CamComponent(painter:Painter){
 @Preview
 @Composable
 fun PrevTwo(){
-    GettingStartedTwo()
+    GettingStartedTwo(rememberNavController())
 }

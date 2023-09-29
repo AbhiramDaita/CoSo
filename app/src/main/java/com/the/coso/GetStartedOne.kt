@@ -20,17 +20,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.the.coso.ui.theme.CoSoTheme
+import com.the.coso.ui.theme.Lato
 import com.the.coso.ui.theme.Sixteen
 import com.the.coso.ui.theme.Thirteen
 import com.the.coso.ui.theme.Two
 
 @Composable
-fun GetStartedOneScreen(){
+fun GetStartedOneScreen(navController: NavController){
 
     var name by rememberSaveable{ mutableStateOf("") }
     var phone by rememberSaveable{ mutableStateOf("") }
@@ -69,9 +73,11 @@ fun GetStartedOneScreen(){
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = { TextButton(onClick = {}){
                     Text("verify", color = Sixteen)
-                } })
-            Spacer(Modifier.height(50.dp    ))
-            ButtonComponent()
+                } },
+                textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+            )
+            Spacer(Modifier.height(50.dp))
+            ButtonComponent(onClick = {navController.navigate(Screens.GettingStartedTwo.route)})
         }
     }
 }
@@ -88,11 +94,12 @@ fun TextFieldComponent(placeholder:String,value:String,onValueChange:(String)->U
             unfocusedIndicatorColor = Thirteen,
             focusedContainerColor = Thirteen,
             cursorColor = Two,
-        ))
+        ),
+        textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp))
 }
 
 @Preview
 @Composable
 fun PrevOne(){
-    GetStartedOneScreen()
+    GetStartedOneScreen(rememberNavController())
 }

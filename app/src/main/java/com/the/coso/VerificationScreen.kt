@@ -1,6 +1,5 @@
 package com.the.coso
 
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,13 +24,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.One
 import com.the.coso.ui.theme.Thirteen
 import com.the.coso.ui.theme.Two
 
 @Composable
-fun VerificationScreen(){
+fun VerificationScreen(navController: NavHostController) {
     var code by rememberSaveable{ mutableStateOf("") }
 
     CoSoTheme {
@@ -61,7 +62,7 @@ fun VerificationScreen(){
                 Text("resend?", color = Color.Gray, fontSize = 17.sp)
             }
             Spacer(modifier = Modifier.height(60.dp))
-            ButtonComponent()
+            ButtonComponent(onClick = {})
         }
     }
 }
@@ -70,5 +71,5 @@ fun VerificationScreen(){
 @Preview
 @Composable
 fun PreVerification(){
-    VerificationScreen()
+    VerificationScreen(rememberNavController())
 }
