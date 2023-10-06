@@ -7,7 +7,7 @@ sealed class Screens(val route:String) {
 
     object GetStartedOne : Screens(route = "GetStartedOne")
 
-    object GettingStartedTwo : Screens(route = "GettingStartedTwo")
+    object GettingStartedTwo : Screens(route = "GettingStartedTwo/{userName}/{userCollege}")
 
     object GettingStartedThree : Screens(route = "GettingStartedThree")
 
@@ -22,5 +22,21 @@ sealed class Screens(val route:String) {
     object Explore : Screens("ExploreScreen")
 
     object ClassRoom : Screens("ClassRoomScreens")
+
+    object NewPostScreen : Screens("NewPostScreen")
+
+    object Settings : Screens("SettingsScreen")
+
+    object EditProfileScreen : Screens("EditProfileScreen")
+
+    object HelpScreen : Screens("HelpScreen")
+
+    object AboutScreen : Screens("AboutScreen")
+
+    object AccountAbout : Screens("AccountAbout")
+
+    object PrivacyScreen : Screens("PrivacyPolicy")
+
+    object TermsUse : Screens("TermsOfUse")
 
 }

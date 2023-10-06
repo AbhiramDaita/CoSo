@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "14903117352",
+    "project_id": "coso-2ff6a",
+    "storage_bucket": "coso-2ff6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14903117352:android:6f45202f5817b6047e971d",
+        "android_client_info": {
+          "package_name": "com.the.coso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2Cj4djztk9QmWl6CheK4v3-jZ9H_Qlkg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

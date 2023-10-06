@@ -30,12 +30,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.One
 import com.the.coso.ui.theme.Twelve
 
+private lateinit var user : FirebaseUser
+
 @Composable
 fun ProfileScreen(navController: NavController){
+
+    user = Firebase.auth.currentUser!!
+
     CoSoTheme {
         Column(modifier = Modifier
             .fillMaxSize()
@@ -44,10 +52,12 @@ fun ProfileScreen(navController: NavController){
             Row(modifier = Modifier
                 .fillMaxWidth()){
                 // Username
-                Text("not_marcus", fontSize =23.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Text(user.displayName!!, fontSize =23.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
 
                 // To Settings
-                IconButton(onClick = {}){
+                IconButton(onClick = {
+                    navController.navigate(Screens.Settings.route)
+                }){
                     Icon(Icons.Default.Settings, contentDescription = "settings")
                 }
 
@@ -62,17 +72,16 @@ fun ProfileScreen(navController: NavController){
                     .background(Color.Blue)){
                     // Profile Picture
                     AsyncImage(
-                        model="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsynwv-5qtogtOwJbIjaPFJUmHpzhxgqIAug&usqp=CAU",
+                        model=user.photoUrl,
                         contentDescription = "Profile Picture"
                     )
                 }
                 Spacer(modifier = Modifier.width(15.dp))
 
                 Column {
-                    Text("Marcus Magnus", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(user.displayName!!, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(8.dp))
                     // Single Line Bio
-                    Text("the go-to guy of CS", fontSize = 16.sp)
                 }
             }
 

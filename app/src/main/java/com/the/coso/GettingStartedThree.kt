@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.Lato
 import com.the.coso.ui.theme.Thirteen
@@ -159,7 +162,25 @@ fun GettingStartedThree(navController: NavHostController) {
                 textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp)
             )
             Spacer(modifier = Modifier.height(40.dp))
-            ButtonComponent(onClick = {})
+            ButtonComponent(onClick = {
+                val user = Firebase.auth.currentUser
+                val db = Firebase.firestore
+                val data = hashMapOf(
+                    "course" to selectedCourse,
+                    "year" to selectedYear,
+                    "about" to about
+                )
+                db
+                    .collection("users")
+                    .document(user!!.uid)
+                    .set(data)
+                    .addOnCompleteListener {
+                        navController.popBackStack(
+                            route = Screens.Home.route,
+                            inclusive = false
+                        )
+                    }
+            })
         }
     }
 }

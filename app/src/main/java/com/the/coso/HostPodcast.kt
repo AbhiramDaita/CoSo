@@ -55,7 +55,7 @@ fun HostPodcast(navController: NavController){
             .fillMaxSize()
             .background(Color.White)
             .padding(15.dp)){
-            AppBar("host a podcast")
+            AppBar("host a podcast",navController)
             Spacer(modifier = Modifier.height(25.dp))
             // Title Input
             OutlinedTextField(value = title,
@@ -114,8 +114,10 @@ fun HostPodcast(navController: NavController){
 }
 
 @Composable
-fun AppBar(title : String){
-    IconButton(onClick = {}){
+fun AppBar(title : String,navController: NavController){
+    IconButton(onClick = {
+        navController.popBackStack()
+    }){
         Icon(Icons.Default.ArrowBack,contentDescription="null", modifier = Modifier.size(30.dp))
     }
     Spacer(Modifier.height(20.dp))

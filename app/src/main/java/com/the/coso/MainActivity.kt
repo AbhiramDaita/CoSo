@@ -1,5 +1,6 @@
 package com.the.coso
 
+import android.content.Intent
 import android.os.Bundle
 
 import androidx.activity.ComponentActivity
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,22 +38,107 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.initialize
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.Four
 import com.the.coso.ui.theme.One
 import kotlinx.coroutines.delay
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : ComponentActivity() {
+    private lateinit var auth: FirebaseAuth
+    private lateinit var navController: NavHostController
+    private var storedVerificationId: String? = ""
+    private lateinit var resendToken : PhoneAuthProvider.ForceResendingToken
+    private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            val navController = rememberNavController()
-            SetupNavGraph(navController)
+        Firebase.initialize(this)
+        auth = Firebase.auth
+        callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
+            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                println("onVerificationCompleted: $p0");
+            }
 
+            override fun onVerificationFailed(e: FirebaseException) {
+                if(e is FirebaseAuthInvalidCredentialsException) {
+                    // Invalid Request
+                } else if (e is FirebaseTooManyRequestsException){
+                    // The SMS quota for the project has been exceeded
+                } else if (e is FirebaseAuthMissingActivityForRecaptchaException){
+                    // reCAPTCHA verification attempted with null Activity
+                }
+            }
+
+            override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
+                storedVerificationId = p0
+                resendToken = p1
+                navController.navigate(Screens.Verification.route)
+            }
+        }
+        
+        setContent {
+            navController = rememberNavController()
+            SetupNavGraph(navController)
+            setFun { startPhoneNumberVerification() }
+            verifyFun { verifyPhoneNumberWithCode() }
+            SetAuth { startPhoneNumberVerification() }
         }
     }
+    
+    private fun startPhoneNumberVerification(){
+        val phoneNumber = getPhoneNumber()
+        val options = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setActivity(this)
+            .setCallbacks(callbacks)
+            .build()
+        PhoneAuthProvider.verifyPhoneNumber(options)
+    }
+
+    private fun verifyPhoneNumberWithCode() : Boolean{
+        var verified = false
+        val code = getVerificationCode();
+        val credential = PhoneAuthProvider.getCredential(storedVerificationId!!,code)
+        if (credential.smsCode == code){
+            verified = true
+            signInWithPhoneAuthCredential(credential = credential)
+        }
+
+        return verified
+    }
+
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential){
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this){task->
+                if(task.isSuccessful){
+                    println("Sign in sucess")
+
+                    val user = task.result?.user
+                    println(user)
+                } else {
+                    if(task.exception is FirebaseAuthInvalidCredentialsException){
+                        // The verification code entered was invalid
+                    }
+                }
+            }
+    }
+
 }
 
 @Composable
@@ -63,7 +150,9 @@ fun OnBoardingScreen(navController: NavController){
             Spacer(modifier = Modifier.height(20.dp))
 
             TypewriterText(
-                texts = listOf("get the scoop on campus happenings. follow clubs, events, and campus organizations to stay in the know about all the exciting activities on and around your campus.")
+                texts = listOf("get the scoop on campus happenings. follow clubs, events, and campus organizations to stay in the know about all the exciting activities on and around your campus.",
+                    "Experience college life like never before with our innovative social media app designed exclusively for students to connect, share, and thrive together on campus.",
+                    "Introducing the college social media app that connects students, sparks conversations, and fosters a vibrant campus community like never before.")
             )
             Spacer(modifier = Modifier.height(50.dp))
             Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom){
@@ -128,6 +217,9 @@ fun TypewriterText(
         textAlign = TextAlign.Center
     )
 }
+
+
+
 
 @Preview(showBackground = true)
 @Composable

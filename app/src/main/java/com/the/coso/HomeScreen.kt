@@ -12,26 +12,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-
-
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,10 +45,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.the.coso.ui.theme.CoSoTheme
+import com.the.coso.ui.theme.Thirteen
 import com.the.coso.ui.theme.Twelve
+
 
 
 
@@ -60,7 +67,24 @@ fun HomeScreen(navController : NavController){
         Column(modifier = Modifier
             .fillMaxSize()
             .background(Color.White)) {
-            PostComponent()
+            LazyColumn(modifier = Modifier.padding(15.dp)) {
+                item{
+                    AppBar3()
+                }
+                item {
+                    Spacer(modifier = Modifier.height(25.dp))
+                    OutlinedTextField(value = "write something...",
+                        onValueChange = {},
+                        colors = TextFieldDefaults.colors(
+                            disabledContainerColor = Thirteen,
+                            disabledIndicatorColor = Thirteen
+                        ),
+                        enabled = false,
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = TextStyle(fontWeight = FontWeight.Bold)
+                    )
+                }
+            }
             Scaffold(bottomBar = {
                 NavigationBar(
                     containerColor = Twelve,
@@ -94,6 +118,20 @@ fun HomeScreen(navController : NavController){
     }
 }
 
+@Composable
+fun AppBar3(){
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text("home", fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+        IconButton(onClick = {
+
+        }){
+            Icon(Icons.Default.Notifications, contentDescription = "notifications")
+        }
+        IconButton(onClick = {}){
+            Icon(Icons.Outlined.Search,contentDescription = "search")
+        }
+    }
+}
 
 @Composable
 fun PostComponent(){
@@ -141,6 +179,6 @@ fun PostComponent(){
 
 @Preview
 @Composable
-fun prevHome(){
-    PostComponent()
+fun PrevHome(){
+   HomeScreen(rememberNavController())
 }

@@ -24,13 +24,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.One
 import com.the.coso.ui.theme.Thirteen
 import com.the.coso.ui.theme.Two
 
+private lateinit var verification:()->Boolean
+private lateinit var verificationCode : String
+private lateinit var username : String
+private lateinit var userCollege: String
 @Composable
 fun VerificationScreen(navController: NavHostController) {
     var code by rememberSaveable{ mutableStateOf("") }
@@ -62,14 +66,37 @@ fun VerificationScreen(navController: NavHostController) {
                 Text("resend?", color = Color.Gray, fontSize = 17.sp)
             }
             Spacer(modifier = Modifier.height(60.dp))
-            ButtonComponent(onClick = {})
+            ButtonComponent(onClick = { onTap(code,navController) })
         }
     }
 }
 
+fun getVerificationCode():String{
+    return verificationCode
+}
 
+fun setDetails(name:String,college:String){
+    username = name
+    userCollege = college
+}
+
+fun verifyFun(verify:()->Boolean){
+    verification = verify
+}
+
+private fun onTap(code:String,navController: NavController){
+    val previousRoute = navController.previousBackStackEntry?.destination?.route
+    verificationCode = code
+    if(verification()){
+        if(previousRoute == "GetStartedOne"){
+            navController.navigate(Screens.GettingStartedTwo.route + "/$username/$userCollege")
+        }
+        else{
+            navController.navigate(Screens.Home.route)
+        }
+    }
+}
 @Preview
 @Composable
 fun PreVerification(){
-    VerificationScreen(rememberNavController())
 }
