@@ -1,5 +1,6 @@
 package com.the.coso
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -23,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.the.coso.ui.theme.CoSoTheme
@@ -44,7 +48,7 @@ import com.the.coso.ui.theme.Thirteen
 fun GettingStartedThree(navController: NavHostController) {
 
     // Course Selector Variables
-    val courses = listOf("select college","Computer Science and Engineering","Civil Engineering")
+    val courses = listOf("select course","Computer Science and Engineering","Civil Engineering")
     var expandedCourse by remember { mutableStateOf(false) }
     var selectedCourse by remember { mutableStateOf(courses[0]) }
 
@@ -60,6 +64,11 @@ fun GettingStartedThree(navController: NavHostController) {
             .fillMaxSize()
             .background(Color.White)
             .padding(20.dp)){
+
+
+            Row(modifier = Modifier.align(Alignment.End)){
+                Image(painter = painterResource(R.drawable.cup_of_coffee), contentDescription = "coffeee", modifier = Modifier.size(130.dp))
+            }
 
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom){
                 Text("profile", fontSize = 40.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
@@ -173,12 +182,9 @@ fun GettingStartedThree(navController: NavHostController) {
                 db
                     .collection("users")
                     .document(user!!.uid)
-                    .set(data)
+                    .set(data, SetOptions.merge())
                     .addOnCompleteListener {
-                        navController.popBackStack(
-                            route = Screens.Home.route,
-                            inclusive = false
-                        )
+                        navController.navigate(Screens.Home.route)
                     }
             })
         }

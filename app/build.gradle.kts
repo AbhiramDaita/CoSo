@@ -82,4 +82,5 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.2.0-beta01")
 }

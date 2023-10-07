@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CoSo</string>
+    <string name="app_name">UniVerse</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_activity_login">LoginActivity</string>
 </resources>

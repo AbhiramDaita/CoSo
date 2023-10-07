@@ -25,7 +25,7 @@ fun PodcastScreen(navController: NavController){
         Column(modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(15.dp)) {
+            .padding(bottom = 80.dp, start = 15.dp, end = 15.dp, top = 15.dp)) {
             AppBar("College Life",navController)
 
         }

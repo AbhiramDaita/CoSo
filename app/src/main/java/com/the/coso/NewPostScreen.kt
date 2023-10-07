@@ -3,6 +3,7 @@ package com.the.coso
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +49,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.initialize
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.One
 import com.the.coso.ui.theme.Thirteen
@@ -53,16 +57,15 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 
 
-private lateinit var user : FirebaseUser
 
 
 
 @Composable
 fun NewPostScreen(navController: NavController){
 
-    var post by rememberSaveable { mutableStateOf("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use ") }
+    var post by rememberSaveable { mutableStateOf("") }
 
-    user = Firebase.auth.currentUser!!
+    val user = Firebase.auth.currentUser!!
 
     CoSoTheme {
        LazyColumn(modifier = Modifier
@@ -75,7 +78,9 @@ fun NewPostScreen(navController: NavController){
                 Row(modifier = Modifier
                     .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Close,contentDescription="close", modifier = Modifier.size(35.dp))
+                    Icon(Icons.Default.Close,contentDescription="close", modifier = Modifier.size(35.dp).clickable {
+                        navController.popBackStack()
+                    })
                     Spacer(modifier = Modifier.width(20.dp))
                     Box(modifier = Modifier
                         .size(40.dp)
@@ -84,8 +89,10 @@ fun NewPostScreen(navController: NavController){
                     ){
                         // Profile Picture
                         AsyncImage(
-                            model="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsynwv-5qtogtOwJbIjaPFJUmHpzhxgqIAug&usqp=CAU",
-                            contentDescription = "Profile Picture"
+                            model=user.photoUrl,
+                            contentDescription = "Profile Picture",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -97,20 +104,36 @@ fun NewPostScreen(navController: NavController){
 
                         val data = hashMapOf(
                             "post" to post,
-                            "date" to current
+                            "date" to current,
+                            "likes" to 0,
+                            "comments" to 0,
+                            "userID" to user.uid,
+                            "userName" to user.displayName,
+                            "userProfile" to user.photoUrl
                         )
                         val db = Firebase.firestore
-                        db
-                            .collection("users")
-                            .document(user.uid)
-                            .collection("posts")
-                            .add(data)
+                        val publicRef = db.collection("posts")
+                        val userRef = db.collection("users").document(user.uid).collection("posts")
+
+                        userRef
+                                .add(data)
+                                .addOnSuccessListener {
+                                    Log.d("Message","Document data received")
+                                    navController.popBackStack()
+                                }
+                                .addOnFailureListener{
+                                    Log.d("Error Message","Document data not received")
+                                }
+
+                        publicRef.add(data)
                             .addOnSuccessListener {
                                 Log.d("Message","Document data received")
                             }
-                            .addOnFailureListener{
+                            .addOnFailureListener {
                                 Log.d("Error Message","Document data not received")
                             }
+
+
                     }){
                         Text("post", fontSize = 25.sp, fontWeight = FontWeight.Bold)
                     }
@@ -121,22 +144,16 @@ fun NewPostScreen(navController: NavController){
                 OutlinedTextField(value = post,
                     onValueChange = {post = it},
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Thirteen,
-                        focusedIndicatorColor = Thirteen,
-                        unfocusedContainerColor = Thirteen,
-                        unfocusedIndicatorColor = Thirteen,
+                        focusedContainerColor = Color.White,
+                        focusedIndicatorColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        unfocusedIndicatorColor = Color.White,
                         cursorColor = One,
                     ),
                     placeholder = {Text("what do you want to talk about?")},
                     textStyle = TextStyle(lineHeight = 23.sp, fontWeight = FontWeight.Medium)
                 )
 
-                Row(modifier = Modifier.fillMaxHeight(),
-                    verticalAlignment = Alignment.Bottom){
-                    IconButton(onClick = {}){
-                        Icon(painter = painterResource(R.drawable.image_add_fill), contentDescription = "addmedia")
-                    }
-                }
             }
         }
     }

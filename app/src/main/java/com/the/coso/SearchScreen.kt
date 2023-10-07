@@ -72,7 +72,7 @@ fun SearchScreen(navController: NavController){
 
                     // Change Spacing
                     item {
-                        ResultComponent()
+
                     }
                 }
         }
@@ -89,7 +89,8 @@ fun ResultComponent(){
             // Profile Picture
             AsyncImage(
                 model="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsynwv-5qtogtOwJbIjaPFJUmHpzhxgqIAug&usqp=CAU",
-                contentDescription = "Profile Picture"
+                contentDescription = "Profile Picture",
+                modifier = Modifier.fillMaxSize()
             )
         }
         Spacer(modifier = Modifier.width(15.dp))

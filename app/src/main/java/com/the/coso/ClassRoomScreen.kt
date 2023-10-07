@@ -2,6 +2,7 @@ package com.the.coso
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,9 +30,11 @@ fun ClassRoomScreen(navController: NavController){
     CoSoTheme {
         Column(modifier = Modifier
             .fillMaxSize()
-            .background(Color.White).padding(15.dp)) {
+            .background(Color.White).padding(bottom = 80.dp, start = 15.dp, end = 15.dp, top = 15.dp)) {
             Text("classroom", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-            Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally){
+            Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxHeight().clickable {
+                                                                                                           navController.navigate(Screens.Class.route)
+            }, horizontalAlignment = Alignment.CenterHorizontally){
                 Image(painter = painterResource(R.drawable.group_4), contentDescription = "a random image with a woman sitting")
                 Text("join with invite", fontSize = 25.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(10.dp))

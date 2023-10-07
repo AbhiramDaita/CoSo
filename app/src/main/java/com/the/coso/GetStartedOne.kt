@@ -99,6 +99,7 @@ fun GetStartedOneScreen(navController: NavController){
             )
             Spacer(Modifier.height(50.dp))
             ButtonComponent(onClick = {
+                setDetails(name,college)
                 onTap(phone)
             })
         }

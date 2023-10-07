@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,6 +46,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.Thirteen
 
@@ -60,6 +62,10 @@ fun GettingStartedTwo(navController: NavController,Name:String?,College:String?)
             .background(Color.White)
             .fillMaxSize()
             .padding(20.dp)){
+
+            Row(modifier = Modifier.align(Alignment.End)) {
+                Image(painterResource(R.drawable.camer), contentDescription = "camera", modifier = Modifier.size(140.dp))
+            }
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom){
                 Text("profile picture", fontSize = 40.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
@@ -82,14 +88,14 @@ fun GettingStartedTwo(navController: NavController,Name:String?,College:String?)
                     "name" to Name,
                     "college" to College,
                 )
-                user!!.updateProfile(profileUpdates)
+                user.updateProfile(profileUpdates)
                     .addOnCompleteListener {
                             db
                             .collection("users")
                             .document(user.uid)
                             .set(data)
                             .addOnSuccessListener {
-                                Log.d("Message","Entry Done")
+
                             }
                             .addOnFailureListener {
                                 Log.d("Error Message","failure")
@@ -111,15 +117,21 @@ fun CamComponent(painter:Painter, navController: NavController,to:String){
         val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = {uri ->
-                val profileUpdates = userProfileChangeRequest {
-                    photoUri = uri
-                }
-                user!!.updateProfile(profileUpdates)
-                    .addOnCompleteListener { task ->
-                        if(task.isSuccessful){
-                            navController.navigate(Screens.GettingStartedThree.route)
-                        }
+                if (uri != null) {
+                    Firebase.storage.reference.putFile(uri).addOnCompleteListener { task->
+                       if(task.isSuccessful){
+                           val profileUpdates = userProfileChangeRequest {
+                               photoUri = Firebase.storage.reference.downloadUrl.result
+                           }
+                           user!!.updateProfile(profileUpdates)
+                               .addOnCompleteListener { task ->
+                                   if(task.isSuccessful){
+                                       navController.navigate(Screens.GettingStartedThree.route)
+                                   }
+                               }
+                       }
                     }
+                }
             }
         )
 
@@ -130,6 +142,7 @@ fun CamComponent(painter:Painter, navController: NavController,to:String){
             singlePhotoPickerLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
+            clicked = 0
         }
     }
     Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable {

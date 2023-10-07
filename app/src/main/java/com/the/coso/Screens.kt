@@ -39,4 +39,22 @@ sealed class Screens(val route:String) {
 
     object TermsUse : Screens("TermsOfUse")
 
+    object Notification : Screens("NotificationScreen")
+
+    object Search : Screens("SearchScreen")
+
+    object Assignments : Screens("Assignments")
+
+    object Notes : Screens("Notes")
+
+    object TimeTable : Screens("TimeTable")
+
+    object Discussions : Screens("Discussions")
+
+    object MeetClass : Screens("MeetClass")
+
+    object Assignment : Screens("Assignment/{name}")
+
+    object Class : Screens("Class")
+
 }

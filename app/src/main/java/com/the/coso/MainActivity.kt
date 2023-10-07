@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,10 +25,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,7 +72,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Firebase.initialize(this)
+
+
+
         auth = Firebase.auth
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
@@ -92,11 +99,13 @@ class MainActivity : ComponentActivity() {
         }
         
         setContent {
+
             navController = rememberNavController()
             SetupNavGraph(navController)
             setFun { startPhoneNumberVerification() }
             verifyFun { verifyPhoneNumberWithCode() }
             SetAuth { startPhoneNumberVerification() }
+
         }
     }
     
@@ -141,32 +150,38 @@ class MainActivity : ComponentActivity() {
 
 }
 
+
 @Composable
 fun OnBoardingScreen(navController: NavController){
-    CoSoTheme {
-        Column(modifier = Modifier.fillMaxSize().background(Color.White).padding(20.dp), verticalArrangement = Arrangement.Center) {
-            Image(painterResource(R.drawable.group_3), contentDescription = "OnBoarding")
-            Text("welcome", fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-            Spacer(modifier = Modifier.height(20.dp))
+    if(Firebase.auth.currentUser != null){
+        HomeScreen(navController)
+    }
+    else{
+        CoSoTheme {
+            Column(modifier = Modifier.fillMaxSize().background(Color.White).padding(20.dp), verticalArrangement = Arrangement.Center) {
+                Image(painterResource(R.drawable.group_3), contentDescription = "OnBoarding")
+                Text("welcome", fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(20.dp))
 
-            TypewriterText(
-                texts = listOf("get the scoop on campus happenings. follow clubs, events, and campus organizations to stay in the know about all the exciting activities on and around your campus.",
-                    "Experience college life like never before with our innovative social media app designed exclusively for students to connect, share, and thrive together on campus.",
-                    "Introducing the college social media app that connects students, sparks conversations, and fosters a vibrant campus community like never before.")
-            )
-            Spacer(modifier = Modifier.height(50.dp))
-            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom){
-                Button(onClick = {
-                                 navController.navigate(Screens.GetStartedOne.route)
-                }
-                    ,colors = ButtonDefaults.buttonColors(containerColor = Four),
-                    shape = RoundedCornerShape(10.dp)){
-                    Text("get started", color = One, fontWeight = FontWeight.Bold)
-                }
-                OutlinedButton(onClick = {
-                                         navController.navigate(Screens.Login.route)
-                }, shape = RoundedCornerShape(10.dp), modifier = Modifier.width(117.dp)){
-                    Text("login", color = One, fontWeight = FontWeight.Bold)
+                TypewriterText(
+                    texts = listOf("get the scoop on campus happenings. follow clubs, events, and campus organizations to stay in the know about all the exciting activities on and around your campus.",
+                        "Experience college life like never before with our innovative social media app designed exclusively for students to connect, share, and thrive together on campus.",
+                        "Introducing the college social media app that connects students, sparks conversations, and fosters a vibrant campus community like never before.")
+                )
+                Spacer(modifier = Modifier.height(50.dp))
+                Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom){
+                    Button(onClick = {
+                        navController.navigate(Screens.GetStartedOne.route)
+                    }
+                        ,colors = ButtonDefaults.buttonColors(containerColor = Four),
+                        shape = RoundedCornerShape(10.dp)){
+                        Text("get started", color = One, fontWeight = FontWeight.Bold)
+                    }
+                    OutlinedButton(onClick = {
+                        navController.navigate(Screens.Login.route)
+                    }, shape = RoundedCornerShape(10.dp), modifier = Modifier.width(117.dp)){
+                        Text("login", color = One, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
