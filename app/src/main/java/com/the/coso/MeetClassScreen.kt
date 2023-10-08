@@ -75,8 +75,3 @@ fun MateComponent(name:String,imgUrl:String){
     }
 }
 
-@Preview
-@Composable
-fun PrevMeet(){
-    MeetClassScreen(rememberNavController())
-}

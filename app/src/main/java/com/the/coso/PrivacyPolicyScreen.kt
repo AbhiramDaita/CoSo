@@ -97,8 +97,3 @@ fun PrivacyPolicyScreen(navController: NavController){
     }
 }
 
-@Preview
-@Composable
-fun PrevPrivacy(){
-    PrivacyPolicyScreen(rememberNavController())
-}

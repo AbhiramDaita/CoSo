@@ -58,8 +58,3 @@ fun DiscussionComponent(question:String,name:String){
 }
 
 
-@Preview
-@Composable
-fun PrevDiscussion(){
-    DiscussionsScreen(rememberNavController())
-}

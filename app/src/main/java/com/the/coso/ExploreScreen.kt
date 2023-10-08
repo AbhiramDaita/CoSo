@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +39,7 @@ import com.google.firebase.storage.ktx.storage
 import com.the.coso.ui.theme.CoSoTheme
 import com.google.firebase.storage.ktx.component1
 import com.google.firebase.storage.ktx.component2
+import com.the.coso.ui.theme.One
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -50,10 +54,18 @@ fun ExploreScreen(navController: NavController){
         val rows = 3
         LazyColumn(modifier = Modifier
             .fillMaxSize()
-            .background(Color.White).
-        padding(bottom = 80.dp, top = 15.dp, start = 15.dp, end = 15.dp)) {
+            .background(Color.White)
+            .padding(bottom = 80.dp, top = 15.dp, start = 15.dp, end = 15.dp)) {
             item {
                 Text("the art gallery", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                TextButton(onClick = {
+
+                },colors = ButtonDefaults.buttonColors(
+                    contentColor = One,
+                    containerColor = Color.White,
+                )){
+                    Text("post",fontSize = 18.sp,fontWeight=FontWeight.Bold)
+                }
                 Spacer(modifier = Modifier.height(20.dp))
 
                 listRef.listAll()
@@ -75,7 +87,9 @@ fun ExploreScreen(navController: NavController){
                             AsyncImage(
                                 model = uri,
                                 contentDescription = "",
-                                modifier = Modifier.height(190.dp).width(110.dp)
+                                modifier = Modifier
+                                    .height(190.dp)
+                                    .width(110.dp)
                             )
 
                         }
@@ -85,8 +99,3 @@ fun ExploreScreen(navController: NavController){
     }
 }
 
-@Preview
-@Composable
-fun PrevExplore(){
-    ExploreScreen(rememberNavController())
-}

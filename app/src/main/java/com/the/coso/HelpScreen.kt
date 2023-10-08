@@ -30,9 +30,3 @@ fun HelpScreen(navController: NavController){
     }
 }
 
-
-@Preview
-@Composable
-fun PrevHelp(){
-    HelpScreen(rememberNavController())
-}

@@ -33,8 +33,3 @@ fun PodcastScreen(navController: NavController){
 }
 
 
-@Preview
-@Composable
-fun PrevPod(){
-    PodcastScreen(rememberNavController())
-}

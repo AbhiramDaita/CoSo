@@ -129,8 +129,3 @@ fun setFun(auth:()->Unit={}){
     authentication = auth
 }
 
-@Preview
-@Composable
-fun PreviewLogin(){
-    LoginScreen(rememberNavController())
-}

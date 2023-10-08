@@ -267,8 +267,3 @@ fun PostComponent(name:String,content:String,imgUrl:String,likes:String,comments
 }
 
 
-@Preview
-@Composable
-fun PrevHome(){
-   HomeScreen(rememberNavController())
-}

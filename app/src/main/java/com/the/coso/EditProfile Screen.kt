@@ -121,8 +121,3 @@ fun EditPicture(imgUrl:String){
     }
 }
 
-@Preview
-@Composable
-fun PrevEditProfile(){
-    EditProfileScreen(rememberNavController())
-}

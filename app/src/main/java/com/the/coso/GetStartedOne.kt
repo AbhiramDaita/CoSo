@@ -131,8 +131,3 @@ fun TextFieldComponent(placeholder:String,value:String,onValueChange:(String)->U
         textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp))
 }
 
-@Preview
-@Composable
-fun PrevOne(){
-    GetStartedOneScreen(rememberNavController())
-}

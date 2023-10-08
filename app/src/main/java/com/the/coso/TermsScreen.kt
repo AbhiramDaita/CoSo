@@ -82,8 +82,3 @@ fun TermsScreen(navController: NavController){
 }
 
 
-@Preview
-@Composable
-fun PrevTerms(){
-    TermsScreen(rememberNavController())
-}

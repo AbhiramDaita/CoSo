@@ -47,8 +47,3 @@ fun BioProfileEditScreen(navController: NavController){
 }
 
 
-@Preview
-@Composable
-fun PrevBioProfile(){
-    BioProfileEditScreen(rememberNavController())
-}

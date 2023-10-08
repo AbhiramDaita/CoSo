@@ -37,8 +37,3 @@ fun NotificationComponent(){
 
 }
 
-@Preview
-@Composable
-fun PrevNotification(){
-    NotificationScreen(rememberNavController())
-}

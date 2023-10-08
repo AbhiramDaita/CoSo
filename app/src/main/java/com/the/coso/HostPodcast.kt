@@ -124,8 +124,3 @@ fun AppBar(title : String,navController: NavController){
     Text(title, fontWeight = FontWeight.Bold, fontSize = 28.sp)
 }
 
-@Preview
-@Composable
-fun PrevHost(){
-    HostPodcast(rememberNavController())
-}

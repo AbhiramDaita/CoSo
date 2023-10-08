@@ -160,8 +160,3 @@ fun NewPostScreen(navController: NavController){
 }
 
 
-@Preview
-@Composable
-fun PrevNewPost(){
-    NewPostScreen(rememberNavController())
-}

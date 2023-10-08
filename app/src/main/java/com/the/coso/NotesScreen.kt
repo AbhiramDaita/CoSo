@@ -40,9 +40,6 @@ fun NotesScreen(navController: NavController){
                     NoteComponent("cloud computing",list)
                 }
                 Spacer(modifier = Modifier.height(60.dp))
-                Row{
-                    Image(painter = painterResource(R.drawable.long_road_svg), contentDescription = "notes")
-                }
             }
         }
     }
@@ -56,8 +53,3 @@ fun NoteComponent(subjectName:String,names:List<String>){
     }
 }
 
-@Preview
-@Composable
-fun PrevNotes(){
-    NotesScreen(rememberNavController())
-}

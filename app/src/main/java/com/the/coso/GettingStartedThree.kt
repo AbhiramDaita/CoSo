@@ -192,8 +192,3 @@ fun GettingStartedThree(navController: NavHostController) {
 }
 
 
-@Preview
-@Composable
-fun PrevThree(){
-    GettingStartedThree(rememberNavController())
-}

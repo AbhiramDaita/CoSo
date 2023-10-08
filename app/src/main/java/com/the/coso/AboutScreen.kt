@@ -50,8 +50,3 @@ fun AboutComponent(name:String,onClick:()->Unit){
 }
 
 
-@Preview
-@Composable
-fun PrevAbout(){
-    AboutScreen(rememberNavController())
-}

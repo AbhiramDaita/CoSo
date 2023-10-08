@@ -30,15 +30,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.PhoneAuthCredential
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.One
 import com.the.coso.ui.theme.Thirteen
 import com.the.coso.ui.theme.Two
 
-private lateinit var verification:()->Boolean
+private lateinit var verification:()->Unit
 private lateinit var verificationCode : String
-private lateinit var username : String
-private lateinit var userCollege: String
+
+private lateinit var signUp : ()->Unit
 @Composable
 fun VerificationScreen(navController: NavHostController) {
     var code by rememberSaveable{ mutableStateOf("") }
@@ -82,27 +83,15 @@ fun getVerificationCode():String{
     return verificationCode
 }
 
-fun setDetails(name:String,college:String){
-    username = name
-    userCollege = college
-}
 
-fun verifyFun(verify:()->Boolean){
+fun verifyFun(verify: () -> Unit){
     verification = verify
 }
 
 private fun onTap(code:String,navController: NavController){
-    val previousRoute = navController.previousBackStackEntry?.destination?.route
     verificationCode = code
-    if(verification()){
-        if(previousRoute == "GetStartedOne"){
-            println(userCollege)
-            navController.navigate("GettingStartedTwo/$username/$userCollege")
-        }
-        else{
-            navController.navigate(Screens.Home.route)
-        }
-    }
+    verification()
+
 }
 @Preview
 @Composable

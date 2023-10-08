@@ -30,10 +30,14 @@ fun SetupNavGraph(
             arguments = listOf(navArgument("userName") {type = NavType.StringType},
                 navArgument("userCollege"){type = NavType.StringType}
             )
-        ){ backstack->
-            val name = backstack.arguments!!.getString("userName")
-            val college = backstack.arguments!!.getString("userCollege")
-            GettingStartedTwo(navController,name,college)
+        ){
+            val name = it.arguments?.getString("userName")
+            val college = it.arguments?.getString("userCollege")
+
+            if (name != null && college != null) {
+                GettingStartedTwo(navController,name,college,)
+            }
+
         }
         composable(route = Screens.GettingStartedThree.route){
             GettingStartedThree(navController)
@@ -52,7 +56,7 @@ fun SetupNavGraph(
             ExploreScreen(navController)
         }
         composable(route = Screens.Podcast.route){
-            PodcastScreen(navController)
+            PodcastsListScreen(navController)
         }
         composable(route = Screens.ClassRoom.route){
             ClassRoomScreen(navController)

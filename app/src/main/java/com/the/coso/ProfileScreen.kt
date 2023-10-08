@@ -129,8 +129,3 @@ fun ProfileScreen(navController: NavController){
 }
 
 
-@Preview
-@Composable
-fun PrevProf(){
-    ProfileScreen(rememberNavController())
-}

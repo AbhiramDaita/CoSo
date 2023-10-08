@@ -62,19 +62,20 @@ import com.the.coso.ui.theme.One
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
+private lateinit var username : String
+private lateinit var userCollege: String
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var navController: NavHostController
+
     private var storedVerificationId: String? = ""
     private lateinit var resendToken : PhoneAuthProvider.ForceResendingToken
     private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    private lateinit var navController:NavHostController
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
         auth = Firebase.auth
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
@@ -99,7 +100,6 @@ class MainActivity : ComponentActivity() {
         }
         
         setContent {
-
             navController = rememberNavController()
             SetupNavGraph(navController)
             setFun { startPhoneNumberVerification() }
@@ -120,26 +120,22 @@ class MainActivity : ComponentActivity() {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    private fun verifyPhoneNumberWithCode() : Boolean{
-        var verified = false
-        val code = getVerificationCode();
-        val credential = PhoneAuthProvider.getCredential(storedVerificationId!!,code)
+    private fun verifyPhoneNumberWithCode() {
+        val code = getVerificationCode()
+        var credential : PhoneAuthCredential = PhoneAuthProvider.getCredential(storedVerificationId!!,code)
         if (credential.smsCode == code){
-            verified = true
-            signInWithPhoneAuthCredential(credential = credential)
+            signInWithPhoneAuthCredential(credential)
         }
 
-        return verified
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential){
+
+
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this){task->
                 if(task.isSuccessful){
-                    println("Sign in sucess")
-
-                    val user = task.result?.user
-                    println(user)
+                    navController.navigate("GettingStartedTwo/${username}/${userCollege}")
                 } else {
                     if(task.exception is FirebaseAuthInvalidCredentialsException){
                         // The verification code entered was invalid
@@ -148,6 +144,12 @@ class MainActivity : ComponentActivity() {
             }
     }
 
+
+}
+
+fun setDetails(name:String,college:String){
+    username = name
+    userCollege = college
 }
 
 
@@ -158,7 +160,10 @@ fun OnBoardingScreen(navController: NavController){
     }
     else{
         CoSoTheme {
-            Column(modifier = Modifier.fillMaxSize().background(Color.White).padding(20.dp), verticalArrangement = Arrangement.Center) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(20.dp), verticalArrangement = Arrangement.Center) {
                 Image(painterResource(R.drawable.group_3), contentDescription = "OnBoarding")
                 Text("welcome", fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(20.dp))
@@ -236,8 +241,3 @@ fun TypewriterText(
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    OnBoardingScreen(rememberNavController())
-}

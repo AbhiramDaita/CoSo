@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
@@ -78,7 +79,7 @@ fun GettingStartedTwo(navController: NavController,Name:String?,College:String?)
 
             // Go to Gallery
             Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()){
-                CamComponent(painterResource(R.drawable.image_add_fill),navController,"toGallery")
+                CamComponent(navController,"toGallery")
                 val db = Firebase.firestore
                 val profileUpdates = userProfileChangeRequest {
                     displayName = Name
@@ -95,7 +96,7 @@ fun GettingStartedTwo(navController: NavController,Name:String?,College:String?)
                             .document(user.uid)
                             .set(data)
                             .addOnSuccessListener {
-
+                                navController.navigate(Screens.GettingStartedThree.route)
                             }
                             .addOnFailureListener {
                                 Log.d("Error Message","failure")
@@ -109,32 +110,31 @@ fun GettingStartedTwo(navController: NavController,Name:String?,College:String?)
 
 
 @Composable
-fun CamComponent(painter:Painter, navController: NavController,to:String){
+fun CamComponent(navController: NavController,to:String){
     var clicked by remember { mutableIntStateOf(0) }
 
     if(clicked == 1 && to == "toGallery"){
 
         val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = {uri ->
-                if (uri != null) {
-                    Firebase.storage.reference.putFile(uri).addOnCompleteListener { task->
-                       if(task.isSuccessful){
-                           val profileUpdates = userProfileChangeRequest {
-                               photoUri = Firebase.storage.reference.downloadUrl.result
-                           }
-                           user!!.updateProfile(profileUpdates)
-                               .addOnCompleteListener { task ->
-                                   if(task.isSuccessful){
-                                       navController.navigate(Screens.GettingStartedThree.route)
-                                   }
-                               }
-                       }
+            contract = ActivityResultContracts.PickVisualMedia()
+        ) { uri ->
+            if (uri != null) {
+                Firebase.storage.reference.putFile(uri).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val profileUpdates = userProfileChangeRequest {
+                            photoUri = Firebase.storage.reference.downloadUrl.result
+
+                        }
+                        user!!.updateProfile(profileUpdates)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    navController.navigate(Screens.GettingStartedThree.route)
+                                }
+                            }
                     }
                 }
             }
-        )
-
+        }
 
 
         // Take a look at the Effect API.
@@ -150,7 +150,7 @@ fun CamComponent(painter:Painter, navController: NavController,to:String){
     }){
         Surface(shape = RoundedCornerShape(50), color = Thirteen, modifier = Modifier.size(110.dp)){
         }
-        Icon(painter = painter,contentDescription="camera")
+        Icon(painter = painterResource(id = R.drawable.image_add_fill),contentDescription="camera")
     }
 }
 

@@ -51,9 +51,3 @@ fun ProfileNameEdit(navController: NavController){
         }
     }
 }
-
-@Preview
-@Composable
-fun PrevProfileName(){
-    ProfileNameEdit(rememberNavController())
-}
