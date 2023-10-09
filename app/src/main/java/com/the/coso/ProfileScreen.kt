@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -45,14 +48,19 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.the.coso.DataClasses.Posts
+import com.the.coso.ViewModels.ProfilePostsRepo
+import com.the.coso.ViewModels.ProfilePostsViewModel
+import com.the.coso.ViewModels.PublicPostsRepo
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.Twelve
+import java.lang.IllegalStateException
 
 private lateinit var user : FirebaseUser
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun ProfileScreen(navController: NavController){
+fun ProfileScreen(navController: NavController,
+                  profilePostsViewModel: ProfilePostsViewModel = viewModel(factory = ProfilePostsViewModelFactory(ProfilePostsRepo()))){
 
     user = Firebase.auth.currentUser!!
 
@@ -103,30 +111,26 @@ fun ProfileScreen(navController: NavController){
                 Spacer(Modifier.height(15.dp))
                 Divider(modifier = Modifier.fillMaxWidth(), color = Twelve)
 
-                val posts by rememberSaveable{ mutableStateOf(arrayListOf(Posts("","","","","","","",""))) }
+                val postsList = profilePostsViewModel.getProfilePosts(user.uid).collectAsState(initial = null).value
 
-                SideEffect {
-                    Firebase
-                        .firestore
-                        .collection("users")
-                        .document(user.uid)
-                        .collection("posts")
-                        .get()
-                        .addOnSuccessListener { query ->
-                            for (doc in query){
-                                posts.add(Posts(doc.id,doc["post"].toString(),doc["likes"].toString(),doc["comments"].toString(),doc["date"].toString(),doc["userName"].toString(),doc["userProfile"].toString(),doc["userID"].toString()))
-                            }
-                        }
-                }
-
-                posts.forEach {
-                    PostComponent(it.userName,it.content,it.userPic,it.likes,it.comments)
-                    Spacer(modifier = Modifier.height(10.dp))
+                val list = postsList?.toObjects(Posts::class.java)
+                list?.forEach {
+                    PostComponent(it.userName,it.post,it.userProfile,it.likes,it.comments)
                 }
             }
         }
     }
 }
+
+class ProfilePostsViewModelFactory(private val profilePostsRepo: ProfilePostsRepo):ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(ProfilePostsViewModel::class.java)){
+            return ProfilePostsViewModel(profilePostsRepo) as T
+        }
+        throw IllegalStateException()
+    }
+}
+
 
 
 @Preview

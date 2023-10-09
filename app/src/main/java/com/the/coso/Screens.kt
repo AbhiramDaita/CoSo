@@ -57,4 +57,11 @@ sealed class Screens(val route:String) {
 
     object Class : Screens("Class")
 
+    object PodcastsList : Screens("PodcastsList")
+
+    object HostaPodcast : Screens("HostaPodcast")
+
+    object EditName : Screens("EditName")
+
+    object BioUpdate : Screens("BioUpdate")
 }

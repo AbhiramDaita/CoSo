@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -25,20 +26,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.the.coso.ui.theme.CoSoTheme
+import com.the.coso.ui.theme.Lato
 import com.the.coso.ui.theme.One
 import com.the.coso.ui.theme.Thirteen
 import com.the.coso.ui.theme.Two
 
-private lateinit var verification:()->Boolean
+private lateinit var verification:()->Unit
 private lateinit var verificationCode : String
-private lateinit var username : String
-private lateinit var userCollege: String
+
 @Composable
 fun VerificationScreen(navController: NavHostController) {
     var code by rememberSaveable{ mutableStateOf("") }
@@ -64,7 +66,10 @@ fun VerificationScreen(navController: NavHostController) {
                 unfocusedIndicatorColor = Thirteen,
                 focusedIndicatorColor = Thirteen,
                 cursorColor = Two,
-            ), textStyle = TextStyle(fontWeight = FontWeight.Bold, color = One)
+            ), textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                )
             )
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -73,7 +78,7 @@ fun VerificationScreen(navController: NavHostController) {
                 Text("resend?", color = Color.Gray, fontSize = 17.sp)
             }
             Spacer(modifier = Modifier.height(60.dp))
-            ButtonComponent(onClick = { onTap(code,navController) })
+            ButtonComponent(onClick = { onTap(code) })
         }
     }
 }
@@ -82,27 +87,14 @@ fun getVerificationCode():String{
     return verificationCode
 }
 
-fun setDetails(name:String,college:String){
-    username = name
-    userCollege = college
-}
 
-fun verifyFun(verify:()->Boolean){
+fun verifyFun(verify: () -> Unit){
     verification = verify
 }
 
-private fun onTap(code:String,navController: NavController){
-    val previousRoute = navController.previousBackStackEntry?.destination?.route
+private fun onTap(code:String){
     verificationCode = code
-    if(verification()){
-        if(previousRoute == "GetStartedOne"){
-            println(userCollege)
-            navController.navigate("GettingStartedTwo/$username/$userCollege")
-        }
-        else{
-            navController.navigate(Screens.Home.route)
-        }
-    }
+    verification()
 }
 @Preview
 @Composable

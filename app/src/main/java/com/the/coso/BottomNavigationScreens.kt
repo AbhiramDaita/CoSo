@@ -2,14 +2,14 @@ package com.the.coso
 
 sealed class BottomNavigationScreens(val route:String, val resourceId:Int){
 
-    object Home : BottomNavigationScreens("HomeScreen",R.drawable.home_line)
+    object Home : BottomNavigationScreens(Screens.Home.route,R.drawable.home_line)
 
-    object Profile : BottomNavigationScreens("ProfileScreen",R.drawable.profile_thin)
+    object Profile : BottomNavigationScreens(Screens.Profile.route,R.drawable.profile_thin)
 
-    object Podcast : BottomNavigationScreens("PodcastScreen",R.drawable.ep_mic)
+    object Podcast : BottomNavigationScreens(Screens.PodcastsList.route,R.drawable.ep_mic)
 
-    object Explore : BottomNavigationScreens("ExploreScreen",R.drawable.explore_outline)
+    object Explore : BottomNavigationScreens(Screens.Explore.route,R.drawable.explore_outline)
 
-    object ClassRoom : BottomNavigationScreens("ClassRoomScreens",R.drawable.black_board_line)
+    object ClassRoom : BottomNavigationScreens(Screens.ClassRoom.route,R.drawable.black_board_line)
 
 }

@@ -78,7 +78,7 @@ fun GettingStartedTwo(navController: NavController,Name:String?,College:String?)
 
             // Go to Gallery
             Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()){
-                CamComponent(painterResource(R.drawable.image_add_fill),navController,"toGallery")
+                CamComponent(painterResource(R.drawable.image_add_fill),navController)
                 val db = Firebase.firestore
                 val profileUpdates = userProfileChangeRequest {
                     displayName = Name
@@ -109,40 +109,51 @@ fun GettingStartedTwo(navController: NavController,Name:String?,College:String?)
 
 
 @Composable
-fun CamComponent(painter:Painter, navController: NavController,to:String){
+fun CamComponent(painter:Painter, navController: NavController){
     var clicked by remember { mutableIntStateOf(0) }
 
-    if(clicked == 1 && to == "toGallery"){
-
+    if(clicked == 1){
         val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = {uri ->
                 if (uri != null) {
-                    Firebase.storage.reference.putFile(uri).addOnCompleteListener { task->
-                       if(task.isSuccessful){
-                           val profileUpdates = userProfileChangeRequest {
-                               photoUri = Firebase.storage.reference.downloadUrl.result
-                           }
-                           user!!.updateProfile(profileUpdates)
-                               .addOnCompleteListener { task ->
-                                   if(task.isSuccessful){
-                                       navController.navigate(Screens.GettingStartedThree.route)
-                                   }
-                               }
-                       }
+                    uri.lastPathSegment?.let {
+                        val ref = Firebase.storage.reference.child(it)
+                        val uploadTask = ref.putFile(uri)
+                        val urlTask = uploadTask.continueWithTask { task->
+                            if(!task.isSuccessful){
+                                task.exception?.let {
+                                    throw it
+                                }
+                            }
+                            ref.downloadUrl
+                        }.addOnCompleteListener { task->
+                            if(task.isSuccessful){
+                                val profileUpdates = userProfileChangeRequest {
+                                    photoUri = task.result
+                                }
+                                user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener { task ->
+                                        if(task.isSuccessful){
+                                            navController.navigate(Screens.GettingStartedThree.route)
+                                            clicked = 0
+                                        }
+                                    }
+                            }else{
+                                println("Failed")
+                            }
+                        }
                     }
                 }
+
             }
         )
-
-
-
         // Take a look at the Effect API.
         SideEffect{
             singlePhotoPickerLauncher.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
-            clicked = 0
+
         }
     }
     Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable {

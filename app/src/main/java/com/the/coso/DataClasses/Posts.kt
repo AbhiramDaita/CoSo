@@ -1,12 +1,12 @@
 package com.the.coso.DataClasses
 
 data class Posts(
-    val id : String,
-    val content : String,
-    val likes : String,
-    val comments : String,
-    val date : String,
-    val userName : String,
-    val userPic  : String,
-    val userUID : String,
+    val id : String = "",
+    val post : String ="",
+    val likes : Long =0,
+    val comments : Long =0,
+    val date : String="",
+    val userName : String="",
+    val userProfile  : String="",
+    val userID : String="",
 )

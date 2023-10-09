@@ -61,7 +61,9 @@ fun SettingsScreen(navController: NavController){
                 })
                 Text("logout", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF6969),
                     modifier = Modifier.clickable {
-                        Firebase.auth.signOut()
+                        Firebase.auth.signOut().also {
+                            navController.navigate(Screens.OnBoarding.route)
+                        }
                     })
             }
         }
@@ -72,7 +74,9 @@ fun SettingsScreen(navController: NavController){
 fun SettingComponent(icon:Painter,name:String,onClick:()->Unit){
     Row(modifier = Modifier
         .fillMaxWidth()
-        .background(Color.White)){
+        .background(Color.White).clickable {
+            onClick()
+        }){
         Icon(icon,contentDescription=name, modifier = Modifier.size(24.dp))
         Spacer(modifier = Modifier.width(15.dp))
         Text(name, fontSize = 18.sp, fontWeight = FontWeight.Bold)

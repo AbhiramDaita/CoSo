@@ -135,7 +135,7 @@ fun NewPostScreen(navController: NavController){
 
 
                     }){
-                        Text("post", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                        Text("post", fontSize = 24.sp, fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -151,7 +151,7 @@ fun NewPostScreen(navController: NavController){
                         cursorColor = One,
                     ),
                     placeholder = {Text("what do you want to talk about?")},
-                    textStyle = TextStyle(lineHeight = 23.sp, fontWeight = FontWeight.Medium)
+                    textStyle = TextStyle(lineHeight = 23.sp, fontWeight = FontWeight.Medium, fontSize = 19.sp)
                 )
 
             }

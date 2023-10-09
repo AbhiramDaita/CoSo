@@ -34,11 +34,11 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,20 +52,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.ktx.toObjects
 import com.the.coso.DataClasses.Posts
+import com.the.coso.ViewModels.PublicPostsRepo
+import com.the.coso.ViewModels.PublicPostsViewModel
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.Thirteen
 import com.the.coso.ui.theme.Twelve
-
-
+import java.lang.IllegalStateException
 
 
 @SuppressLint("MutableCollectionMutableState")
@@ -122,11 +126,17 @@ fun HomeScreen(navController : NavController){
 
 
 @Composable
-fun HomeS(navController: NavController,modifier: Modifier){
+fun HomeS(
+    navController: NavController,
+    modifier: Modifier,
+    publicPostsViewModel: PublicPostsViewModel = viewModel(factory = PublicPostsViewModelFactory(
+        PublicPostsRepo()
+    ))
+){
     Column(modifier = modifier
         .fillMaxSize()
         .background(Color.White)) {
-        LazyColumn(modifier = Modifier.padding(15.dp)) {
+        LazyColumn(modifier = Modifier.padding(start = 15.dp, end = 15.dp)) {
             item{
                 AppBar3(navController)
             }
@@ -145,30 +155,28 @@ fun HomeS(navController: NavController,modifier: Modifier){
                 )
             }
             item {
-                val posts by rememberSaveable{ mutableStateOf(arrayListOf(Posts("","","","","","","",""))) }
+                Spacer(modifier = Modifier.height(25.dp))
+                val postsList = publicPostsViewModel.getPublicPostsInfo().collectAsState(initial = null).value
 
-                SideEffect {
-                    Firebase
-                        .firestore
-                        .collection("posts")
-                        .get()
-                        .addOnSuccessListener { query ->
-                            for (doc in query){
-                                posts.add(Posts(doc.id,doc["post"].toString(),doc["likes"].toString(),doc["comments"].toString(),doc["date"].toString(),doc["userName"].toString(),doc["userProfile"].toString(),doc["userID"].toString()))
-                            }
-                        }
+                val list = postsList?.toObjects(Posts::class.java)
+                list?.forEach {
+                    PostComponent(it.userName,it.post,it.userProfile,it.likes,it.comments)
                 }
-
-                posts.forEach {
-                    PostComponent(it.userName,it.content,it.userPic,it.likes,it.comments)
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-
             }
         }
 
 
     }
+}
+
+class PublicPostsViewModelFactory(private val postsRepo: PublicPostsRepo) : ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(PublicPostsViewModel::class.java)) {
+            return PublicPostsViewModel(postsRepo) as T
+        }
+        throw IllegalStateException()
+    }
+
 }
 
 @Composable
@@ -219,11 +227,13 @@ fun AppBar3(navController: NavController){
 }
 
 @Composable
-fun PostComponent(name:String,content:String,imgUrl:String,likes:String,comments:String){
+fun PostComponent(name:String,content:String,imgUrl:String,likes:Long,comments:Long){
 
     var expanded by remember { mutableStateOf(false) }
+
     CoSoTheme {
-        Column(modifier = Modifier.padding(10.dp).background(Color.White)){
+        Column{
+            Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()){
                 Box(modifier = Modifier
                     .size(50.dp)
@@ -246,20 +256,21 @@ fun PostComponent(name:String,content:String,imgUrl:String,likes:String,comments
             // Post Content
             Text(content, fontSize = 17.sp, lineHeight = 26.sp)
 
-            Row(){
+            Row{
                 // Likes
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = {}){
                         Icon(painterResource(R.drawable.heart), contentDescription = "likes")
                     }
-                    Text(likes)
+                    Text(likes.toString())
                 }
+                Spacer(modifier = Modifier.height(10.dp))
                 // Comments
                 Row(verticalAlignment = Alignment.CenterVertically){
                     IconButton(onClick = {}){
                         Icon(painterResource(R.drawable.comments),contentDescription = "comments")
                     }
-                    Text(comments)
+                    Text(comments.toString())
                 }
             }
         }

@@ -31,7 +31,9 @@ fun BioProfileEditScreen(navController: NavController){
             .fillMaxSize()
             .background(Color.White)
             .padding(15.dp)){
-            AppBar2("bio",navController)
+            AppBar2("bio",navController, onClick = {
+
+            })
             Spacer(modifier = Modifier.height(25.dp))
             OutlinedTextField(value = bio,
                 onValueChange = {bio = it},

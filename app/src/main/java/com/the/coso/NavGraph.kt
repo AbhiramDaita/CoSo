@@ -129,6 +129,22 @@ fun SetupNavGraph(
         composable(route = Screens.Class.route){
             com.the.coso.Class(navController)
         }
+
+        composable(route = Screens.PodcastsList.route){
+            PodcastsListScreen(navController)
+        }
+
+        composable(route = Screens.HostaPodcast.route){
+            HostPodcast(navController)
+        }
+
+        composable(route = Screens.EditName.route){
+            UserNameEditScreen(navController)
+        }
+
+        composable(route = Screens.BioUpdate.route){
+            BioProfileEditScreen(navController)
+        }
     }
 
 }

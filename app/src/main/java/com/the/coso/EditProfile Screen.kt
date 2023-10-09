@@ -1,6 +1,8 @@
 package com.the.coso
 
+import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +35,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.One
 import com.the.coso.ui.theme.Sixteen
@@ -42,8 +46,9 @@ import com.the.coso.ui.theme.Twelve
 @Composable
 fun EditProfileScreen(navController: NavController){
 
-    val profileName = "Ab"
-    val userName = "mahlye_mahlul"
+    val user = Firebase.auth.currentUser
+
+    val userName = user?.displayName
     val bio = "Hello there"
 
     CoSoTheme {
@@ -53,16 +58,22 @@ fun EditProfileScreen(navController: NavController){
             .padding(15.dp)
         ) {
 
-            AppBar2("edit profile",navController)
+            AppBar2("edit profile",navController, onClick = {})
 
             Spacer(modifier = Modifier.height(40.dp))
-            EditPicture("")
-
-            EditDetails(profileName,"name")
+            if (user != null) {
+                user.photoUrl?.let { EditPicture(it) }
+            }
             Spacer(modifier = Modifier.height(15.dp))
-            EditDetails(userName,"username")
+            if (userName != null) {
+                EditDetails(userName,"username", onClick = {
+                    navController.navigate(Screens.EditName.route)
+                })
+            }
             Spacer(modifier = Modifier.height(15.dp))
-            EditDetails(bio,"bio")
+            EditDetails(bio,"bio", onClick ={
+                navController.navigate(Screens.BioUpdate.route)
+            } )
         }
     }
 }
@@ -70,7 +81,7 @@ fun EditProfileScreen(navController: NavController){
 
 
 @Composable
-fun AppBar2(name : String,navController: NavController){
+fun AppBar2(name : String,navController: NavController,onClick: () -> Unit){
     Row (modifier = Modifier.fillMaxWidth()){
         Column(modifier = Modifier.weight(1f)) {
             AppBar(name,navController)
@@ -84,24 +95,28 @@ fun AppBar2(name : String,navController: NavController){
 }
 
 @Composable
-fun EditDetails(detailName:String,label:String){
+fun EditDetails(detailName:String,label:String,onClick:()->Unit){
     Spacer(modifier = Modifier.height(25.dp))
     OutlinedTextField(value = detailName, onValueChange = {},
         label = {Text(label)},
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable {
+                       onClick()
+            },
         textStyle = TextStyle(fontWeight = FontWeight.Medium, color = One),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedBorderColor = Twelve,
         )
-        , readOnly = true
+        , readOnly = true,
+        enabled = false
     )
 }
 
 
 
 @Composable
-fun EditPicture(imgUrl:String){
+fun EditPicture(imgUrl:Uri){
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Box(modifier = Modifier
             .size(80.dp)
@@ -117,7 +132,9 @@ fun EditPicture(imgUrl:String){
     }
     Spacer(modifier = Modifier.height(20.dp))
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("edit picture", color = Sixteen, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Text("edit picture", color = Sixteen, fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.clickable {
+
+        })
     }
 }
 

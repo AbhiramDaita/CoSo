@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,11 +75,11 @@ fun GetStartedOneScreen(navController: NavController){
             Spacer(modifier = Modifier.height(50.dp))
 
             // name input textField
-            TextFieldComponent("enter name",name, onValueChange = {name = it})
+            TextFieldComponent("enter name",name, onValueChange = {name = it}, type = KeyboardType.Text)
             Spacer(modifier = Modifier.height(25.dp))
 
             // phone input textField
-            TextFieldComponent("enter phone",phone, onValueChange = {phone = it})
+            TextFieldComponent("enter phone",phone, onValueChange = {phone = it}, type = KeyboardType.Number)
             Spacer(modifier = Modifier.height(25.dp))
 
 
@@ -116,7 +118,7 @@ fun SetAuth(auth:()->Unit={}){
 }
 
 @Composable
-fun TextFieldComponent(placeholder:String,value:String,onValueChange:(String)->Unit){
+fun TextFieldComponent(placeholder:String,value:String,onValueChange:(String)->Unit,type : KeyboardType){
     OutlinedTextField(value = value,
         onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth(),
@@ -128,7 +130,10 @@ fun TextFieldComponent(placeholder:String,value:String,onValueChange:(String)->U
             focusedContainerColor = Thirteen,
             cursorColor = Two,
         ),
-        textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp))
+        textStyle = TextStyle(fontFamily = Lato, fontWeight = FontWeight.Bold, fontSize = 17.sp),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = type
+        ))
 }
 
 @Preview

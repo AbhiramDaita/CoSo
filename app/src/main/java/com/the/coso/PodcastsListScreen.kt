@@ -1,6 +1,7 @@
 package com.the.coso
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +42,9 @@ fun PodcastsListScreen(navController: NavController){
                 .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically) {
                 Text("podcasts", fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                Row {
+                Row(modifier = Modifier.clickable {
+                    navController.navigate(Screens.HostaPodcast.route)
+                }) {
                     Icon(painterResource(R.drawable.ep_mic), contentDescription = "mic", tint = Sixteen)
                     Text("host", color = Sixteen, fontSize = 19.sp, fontWeight = FontWeight.Bold)
                 }

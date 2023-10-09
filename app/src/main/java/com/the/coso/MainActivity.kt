@@ -1,12 +1,8 @@
 package com.the.coso
 
-import android.content.Intent
 import android.os.Bundle
 
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,17 +21,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,13 +48,15 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.initialize
 import com.the.coso.ui.theme.CoSoTheme
 import com.the.coso.ui.theme.Four
 import com.the.coso.ui.theme.One
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
+
+private lateinit var username : String
+private lateinit var userCollege: String
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
@@ -108,7 +103,8 @@ class MainActivity : ComponentActivity() {
 
         }
     }
-    
+
+
     private fun startPhoneNumberVerification(){
         val phoneNumber = getPhoneNumber()
         val options = PhoneAuthOptions.newBuilder(auth)
@@ -120,26 +116,24 @@ class MainActivity : ComponentActivity() {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    private fun verifyPhoneNumberWithCode() : Boolean{
-        var verified = false
+    private fun verifyPhoneNumberWithCode(){
         val code = getVerificationCode();
         val credential = PhoneAuthProvider.getCredential(storedVerificationId!!,code)
         if (credential.smsCode == code){
-            verified = true
             signInWithPhoneAuthCredential(credential = credential)
         }
 
-        return verified
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential){
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this){task->
                 if(task.isSuccessful){
-                    println("Sign in sucess")
-
-                    val user = task.result?.user
-                    println(user)
+                    if(navController.previousBackStackEntry?.destination?.route == Screens.Login.route){
+                        navController.navigate(Screens.Home.route)
+                    }else{
+                        navController.navigate("GettingStartedTwo/${username}/${userCollege}")
+                    }
                 } else {
                     if(task.exception is FirebaseAuthInvalidCredentialsException){
                         // The verification code entered was invalid
@@ -149,6 +143,11 @@ class MainActivity : ComponentActivity() {
     }
 
 }
+fun setDetails(name:String,college:String){
+    username = name
+    userCollege = college
+}
+
 
 
 @Composable
