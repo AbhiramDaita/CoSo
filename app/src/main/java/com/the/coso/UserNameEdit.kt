@@ -69,8 +69,3 @@ fun UserNameEditScreen(navController: NavController){
     }
 }
 
-@Preview
-@Composable
-fun PrevUserName(){
-    UserNameEditScreen(rememberNavController())
-}

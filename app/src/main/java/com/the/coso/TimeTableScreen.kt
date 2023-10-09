@@ -72,8 +72,3 @@ fun DayComponent(day:String,list:List<String>){
 }
 
 
-@Preview
-@Composable
-fun PrevDay(){
-    TimeTableScreen(rememberNavController())
-}

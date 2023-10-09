@@ -136,8 +136,3 @@ fun TextFieldComponent(placeholder:String,value:String,onValueChange:(String)->U
         ))
 }
 
-@Preview
-@Composable
-fun PrevOne(){
-    GetStartedOneScreen(rememberNavController())
-}

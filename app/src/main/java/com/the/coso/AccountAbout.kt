@@ -51,8 +51,3 @@ fun AccountAboutScreen(navController: NavController){
 }
 
 
-@Preview
-@Composable
-fun PrevAccountAbout(){
-    AccountAboutScreen(rememberNavController())
-}

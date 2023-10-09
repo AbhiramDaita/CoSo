@@ -82,8 +82,3 @@ fun ListComponent(){
     Divider()
 }
 
-@Preview
-@Composable
-fun PrevPodcastsList(){
-    PodcastsListScreen(rememberNavController())
-}

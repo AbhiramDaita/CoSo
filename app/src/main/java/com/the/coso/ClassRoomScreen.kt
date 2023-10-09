@@ -45,8 +45,3 @@ fun ClassRoomScreen(navController: NavController){
 }
 
 
-@Preview
-@Composable
-fun PrevClassRoomScreen(){
-    ClassRoomScreen(rememberNavController())
-}

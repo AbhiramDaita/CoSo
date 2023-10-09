@@ -133,8 +133,3 @@ class ProfilePostsViewModelFactory(private val profilePostsRepo: ProfilePostsRep
 
 
 
-@Preview
-@Composable
-fun PrevProf(){
-    ProfileScreen(rememberNavController())
-}

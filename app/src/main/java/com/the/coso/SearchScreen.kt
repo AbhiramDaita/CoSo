@@ -100,8 +100,3 @@ fun ResultComponent(){
 }
 
 
-@Preview
-@Composable
-fun PrevSearch(){
-    SearchScreen(rememberNavController())
-}

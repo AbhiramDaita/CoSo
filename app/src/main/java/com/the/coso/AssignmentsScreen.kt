@@ -71,9 +71,3 @@ fun AssignmentList(list:List<String>,subjectName:String,navController: NavContro
 
 
 
-
-@Preview
-@Composable
-fun PrevAssignments(){
-    AssignmentsScreen(rememberNavController())
-}

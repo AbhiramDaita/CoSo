@@ -67,8 +67,3 @@ fun QuestionComponent(number:Int,question:String){
     Text(question, fontSize = 19.sp, fontWeight = FontWeight.Bold)
 }
 
-@Preview
-@Composable
-fun PrevAssign(){
-    AssignmentScreen(rememberNavController(),"assignment-1")
-}

@@ -67,9 +67,3 @@ fun Class(navController: NavController){
     }
 }
 
-
-@Preview
-@Composable
-fun PrevClass(){
-    Class(rememberNavController())
-}
